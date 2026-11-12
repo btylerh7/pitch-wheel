@@ -1,6 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    let percent = $state(50);
+    import * as Tone from 'tone';
+    let percent = $state(10);
+    let currentPitch = $state(20);
     let dragging = false;
     let playing = $state(false);
     const circleRadius = 40;
@@ -9,17 +11,37 @@
         const percentVal = circleDashArray * (percent / 100);
         return circleDashArray - percentVal;
     };
+    const synth = new Tone.Synth().toDestination();
+    const now = Tone.now();
+    $effect(() => {
+        if (playing) {
+            synth.triggerAttack(currentPitch);
+        } else {
+            synth.triggerRelease();
+        }
+    });
+    const playSound = async () => {
+        playing = !playing;
+    };
+    const setPitch = (percentage: number) => {
+        const min = 20;
+        const max = 8000;
+        const decimal = percentage / 100;
+        currentPitch = Math.round((max - min) * decimal + 20);
+    };
     const getCenterCoords = (el: HTMLElement) => {
         const boundingRect = el.getBoundingClientRect();
         const cx = boundingRect.left + boundingRect.width / 2;
         const cy = boundingRect.top + boundingRect.height / 2;
         return { cx, cy };
     };
-    onMount(() => {
+    onMount(async () => {
         const circle = document.getElementById('circle');
         const input = document.getElementById('input');
         input!.style.strokeDasharray = circleDashArray.toString();
         input!.style.strokeDashoffset = percentOffset(percent).toString();
+        setPitch(currentPitch);
+        await Tone.start();
     });
     const handlePointerDown = (e: PointerEvent) => {
         dragging = true;
@@ -54,13 +76,14 @@
         // a circle's angle is 2pi radians, so dividing angle/full circle gives us the percentage
         // of the angle along the length of the circle. This can be used with the percent function!
         const percent = (angle / (2 * Math.PI)) * 100;
+        setPitch(percent);
         document.getElementById('input')!.style.strokeDashoffset =
             percentOffset(percent).toString();
     };
 </script>
 
 <div>
-    <button onclick={() => (playing = !playing)} type="button">{playing ? 'Stop' : 'Start'}</button>
+    <button onclick={playSound} type="button">{playing ? 'Stop' : 'Start'}</button>
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 100 100"
@@ -72,6 +95,7 @@
         <circle cx="50" cy="50" r="40" id="circle" />
         <circle cx="50" cy="50" r="40" id="input" />
     </svg>
+    <p>{currentPitch} Hz</p>
 </div>
 
 <style>
@@ -86,8 +110,8 @@
         width: fit-content;
     }
     svg {
-        width: 100px;
-        height: 100px;
+        width: 500px;
+        height: 500px;
     }
     #circle {
         stroke: var(--text-color);

@@ -1,3 +1,8 @@
+<script lang="ts">
+    import problem from '../assets/the-problem.svg';
+    import arcLength from '../assets/arc-length.svg';
+</script>
+
 <dialog id="about-modal">
     <button commandFor="about-modal" command="close">Close</button>
     <h1>How this was made</h1>
@@ -68,7 +73,7 @@
     </p>
     <p>
         Where <code>r</code> is the radius of the circle. So I calculated this, and set the stroke dasharray
-        to the inner circle to this value, then set the offset to the same value
+        to the inner circle to this value, then set the offset to the same value:
     </p>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100px">
         <circle cx="50" cy="50" r="40" id="circle" stroke="white" stroke-width="20px" fill="none" />
@@ -100,6 +105,23 @@
         />
     </svg>
     <p>Lastly, I rotated the circle a little bit so the line starts from the top.</p>
+
+    <h2>Filling the Circle</h2>
+    <p>
+        The idea of the slider is simple enough. You click or drag on the circle and it will fill
+        the slider to where your mouse is. The slider will change the pitch that is played.
+    </p>
+    <p>
+        Wait, how do I know how far to move the offset to get to the mouse? How do I know what pitch
+        to play?
+    </p>
+    <h3>Calculating the Angle</h3>
+    <p>
+        When a user clicks on the circle, we need to get the length of the arc between that point on
+        the circle and the center of the circle.
+    </p>
+    <img src={problem} />
+    <img src={arcLength} />
 </dialog>
 
 <style>
@@ -108,7 +130,7 @@
         border-radius: 5px;
         padding: 0.25rem;
     }
-    dialog {
+    dialog[open] {
         max-height: 75vh;
         overflow: scroll;
         background: var(--background);
@@ -118,5 +140,16 @@
         }
         max-width: 60%;
         margin: auto;
+        display: grid;
+    }
+    button {
+        width: fit-content;
+    }
+    svg {
+        margin: auto;
+    }
+    img {
+        width: 100%;
+        max-width: 500px;
     }
 </style>

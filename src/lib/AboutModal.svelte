@@ -120,8 +120,54 @@
         When a user clicks on the circle, we need to get the length of the arc between that point on
         the circle and the center of the circle.
     </p>
-    <img src={problem} />
-    <img src={arcLength} />
+    <img
+        src={problem}
+        alt="A circle with the top right fourth colored coral. The fill starting point is at the top. The user clicked at the middle right of the circle, and the goal is to figure out the length between the two points."
+    />
+    <img
+        src={arcLength}
+        alt="The angle of a full circle in radians is 2 times Pi. The length of an arc given an angle (theta) is 's = theta times r.' where r is the radius, which is where we get the formula for the circumference of a circle"
+    />
+    <p>
+        There is a formula for getting the anlge too! It is called the inverse tangent or <code
+            >arctangent</code
+        >.
+    </p>
+    <p>
+        There is an arctan function in JavaScript called <code>atan</code>, but it has some
+        limitations and specifically errors when one of the values is zero. <code>atan2</code>
+        was designed to account for this, and it uses the x and y values of the point on the edge of
+        the circle
+    </p>
+    <p>Notably, two weird programming gotchas appear:</p>
+    <ol>
+        <li>
+            The Y axis in JavaScript starts from the top and goes down, which is opposite to a
+            normal coordinate plane. So the value for Y needs to be negative
+        </li>
+        <li>
+            Our circle can be anywhere on the screen, so we need to convert the values so the
+            circle's center is 0,0. To do this, we just subtract the x coordinate from the center x
+            coordinate and the same for the y.
+        </li>
+    </ol>
+    <h2>Putting it all together</h2>
+    <p>
+        Once you have the length of the circle at the clicked point, you can divide that number by
+        the circumference of the circle. That result is the "percentage" of the circle that is
+        filled.
+    </p>
+    <p>
+        The percentage can be then used to calculate which pitch to play! If you take the minimum
+        pitch (20Hz) and the maximum pitch (8000Hz), pretend like it's a line. Get the length by
+        subtracting 20 from 8000. Multiply the percent by the length. That is how far along the line
+        you are. Then add that to the minimum pitch.
+    </p>
+    <h2>In Summary</h2>
+    <p>
+        I hope that this explanation was of interest to you! You'll always hear people in math class
+        saying "When am I ever going to use this?" Well, I certainly found a way to use it!
+    </p>
 </dialog>
 
 <style>
@@ -151,5 +197,10 @@
     img {
         width: 100%;
         max-width: 500px;
+    }
+    ul,
+    ol,
+    li {
+        color: var(--text-color);
     }
 </style>

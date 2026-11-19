@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48">
+    <circle cx="50" cy="50" r="40" stroke="white" stroke-width="20" fill="black" />
+    <circle
+	cx="50"
+	cy="50"
+	r="40"
+	stroke-dasharray="251.327"
+	stroke-dashoffset="100"
+	stroke="coral"
+	stroke-width="10"
+	fill="none"
+    />
+</svg>

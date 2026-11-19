@@ -5,24 +5,25 @@
     let currentPitch = $state(20);
     let dragging = false;
     let playing = $state(false);
-    const circleRadius = 40;
-    const circleDashArray = 2 * Math.PI * circleRadius;
+    const radius = 40;
+    const circumference = 2 * Math.PI * radius;
+    /**
+     * Given a percentage value (ex. 45%), subtracts that
+     * percentage of the circle's circumference (returns 55%)
+     * @example if circumference is 50, percent is 20, returns
+     * 40, aka (50 - (50 * 2/100))
+     */
     const percentOffset = (percent: number) => {
-        const percentVal = circleDashArray * (percent / 100);
-        return circleDashArray - percentVal;
+        const percentVal = circumference * (percent / 100);
+        return circumference - percentVal;
     };
     const synth = new Tone.Synth().toDestination();
-    const now = Tone.now();
+
+    // As long as playing is true, play sound
     $effect(() => {
-        if (playing) {
-            synth.triggerAttack(currentPitch);
-        } else {
-            synth.triggerRelease();
-        }
+        playing ? synth.triggerAttack(currentPitch) : synth.triggerRelease();
     });
-    const playSound = async () => {
-        playing = !playing;
-    };
+
     const setPitch = (percentage: number) => {
         const min = 20;
         const max = 8000;
@@ -35,10 +36,10 @@
         const cy = boundingRect.top + boundingRect.height / 2;
         return { cx, cy };
     };
+
     onMount(async () => {
-        const circle = document.getElementById('circle');
         const input = document.getElementById('input');
-        input!.style.strokeDasharray = circleDashArray.toString();
+        input!.style.strokeDasharray = circumference.toString();
         input!.style.strokeDashoffset = percentOffset(percent).toString();
         setPitch(currentPitch);
         await Tone.start();
@@ -59,11 +60,10 @@
         const { cx, cy } = getCenterCoords(e.target as HTMLElement);
         moveToClick(e.clientX, e.clientY, cx, cy);
     };
-    const handleClick = (e: MouseEvent) => {
-        const { cx, cy } = getCenterCoords(e.target as HTMLElement);
-        moveToClick(e.clientX, e.clientY, cx, cy);
-    };
     const moveToClick = (clientX: number, clientY: number, cx: number, cy: number) => {
+        // atan takes the coordinates of a point on the circle.
+        // Here we take the x and y value of the clicked point, and we convert
+        // it to the distance from the center of the circle's coords.
         const dx = clientX - cx;
         const dy = clientY - cy;
 
@@ -83,7 +83,9 @@
 </script>
 
 <div>
-    <button onclick={playSound} type="button">{playing ? 'Stop' : 'Start'}</button>
+    <button onclick={() => (playing = !playing)} type="button">
+        {playing ? 'Stop' : 'Start'}
+    </button>
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 100 100"
@@ -91,11 +93,14 @@
         onpointermove={handlePointerMove}
         onpointerup={handlePointerUp}
         onpointercancel={handlePointerUp}
+        role="slider"
+        aria-valuenow={currentPitch}
+        tabindex="-1"
     >
         <circle cx="50" cy="50" r="40" id="circle" />
         <circle cx="50" cy="50" r="40" id="input" />
     </svg>
-    <p>{currentPitch} Hz</p>
+    <p id="current-pitch">{currentPitch} Hz</p>
 </div>
 
 <style>
@@ -105,6 +110,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
     button {
         width: fit-content;
@@ -112,6 +118,14 @@
     svg {
         width: 500px;
         height: 500px;
+    }
+    #current-pitch {
+        font-size: 2.25rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        /* magic numbered the translate Y a little bit */
+        transform: translateX(-50%) translateY(-80%);
     }
     #circle {
         stroke: var(--text-color);

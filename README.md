@@ -1,3 +1,6 @@
+<img width="2074" height="1247" alt="image" src="https://github.com/user-attachments/assets/1ed81fdb-b5c6-44c8-8dae-5fa2d9ebd5b6" />
+
+
 # Pitch Wheel
 
 This pitch wheel is an application that allows you to click and drag along
